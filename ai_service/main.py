@@ -126,3 +126,73 @@ def login(form_data: OAuth2PasswordRequestForm = Depends()):
 @app.get("/admin-only")
 def admin_only(user=Depends(require_admin)):
     return {"message": "Welcome Admin"}
+
+@app.get("/dashboard/metrics")
+def dashboard_metrics():
+    return {
+        "total_candidates": 25,
+        "shortlisted": 10,
+        "interviewed": 8,
+        "selected": 3
+    }
+
+
+@app.get("/dashboard/candidates")
+def dashboard_candidates():
+    return [
+        {"name": "Rahul", "score": 92},
+        {"name": "Priya", "score": 88}
+    ]
+@app.get("/dashboard/score-distribution")
+def score_distribution():
+    return {
+        "0-40": 2,
+        "41-55": 4,
+        "56-70": 8,
+        "71-80": 5,
+        "81-90": 4,
+        "91-100": 2
+    }
+@app.get("/dashboard/top-candidates")
+def top_candidates():
+    candidates = [
+        {"name": "Rahul", "score": 92, "status": "Hire"},
+        {"name": "Priya", "score": 88, "status": "Hire"},
+        {"name": "Sneha", "score": 76, "status": "Review"},
+        {"name": "Amit", "score": 58, "status": "Reject"}
+    ]
+
+    return sorted(candidates, key=lambda x: x["score"], reverse=True)
+@app.get("/dashboard/recommendation/{score}")
+def get_recommendation(score: int):
+    if score >= 80:
+        recommendation = "Hire"
+    elif score >= 60:
+        recommendation = "Review"
+    else:
+        recommendation = "Reject"
+
+    return {
+        "score": score,
+        "recommendation": recommendation
+    }
+@app.get("/dashboard/compare")
+def compare_candidates():
+    candidate1 = {
+        "name": "Rahul",
+        "skills": 90,
+        "experience": 85,
+        "education": 80
+    }
+
+    candidate2 = {
+        "name": "Priya",
+        "skills": 85,
+        "experience": 88,
+        "education": 90
+    }
+
+    return {
+        "candidate1": candidate1,
+        "candidate2": candidate2
+    }
