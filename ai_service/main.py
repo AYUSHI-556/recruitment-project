@@ -237,3 +237,13 @@ def submit_answer(data: InterviewAnswer):
         "score": score,
         "feedback": feedback
     }
+@app.get("/workflow/final-report")
+def final_report():
+    return {
+        "candidate_name": "Rahul",
+        "resume_score": 82,
+        "interview_score": 70,
+        "overall_score": 76,
+        "recommendation": "Review",
+        "summary": "Candidate has good technical background but needs stronger interview answers."
+    }
