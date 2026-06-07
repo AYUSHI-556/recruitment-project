@@ -11,6 +11,7 @@ from fastapi.security import OAuth2PasswordRequestForm
 from auth import users_db, verify_password, create_token, get_current_user, require_admin
 from fastapi import Depends
 from auth import get_current_user
+from pydantic import BaseModel
 
 app = FastAPI()
 create_table()
@@ -195,4 +196,44 @@ def compare_candidates():
     return {
         "candidate1": candidate1,
         "candidate2": candidate2
+    }
+@app.get("/interview/questions")
+def interview_questions():
+    return {
+        "questions": [
+            "Tell me about yourself.",
+            "What are your strongest technical skills?",
+            "Explain one project from your resume.",
+            "Why should we hire you?",
+            "Where do you see yourself in 2 years?"
+        ]
+    }
+
+
+class InterviewAnswer(BaseModel):
+    candidate_name: str
+    question: str
+    answer: str
+
+
+@app.post("/interview/submit-answer")
+def submit_answer(data: InterviewAnswer):
+    answer_length = len(data.answer.split())
+
+    if answer_length >= 30:
+        score = 90
+        feedback = "Good detailed answer"
+    elif answer_length >= 15:
+        score = 70
+        feedback = "Average answer, needs more detail"
+    else:
+        score = 45
+        feedback = "Answer is too short"
+
+    return {
+        "candidate_name": data.candidate_name,
+        "question": data.question,
+        "answer": data.answer,
+        "score": score,
+        "feedback": feedback
     }
